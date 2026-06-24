@@ -1,6 +1,7 @@
 ## Protonmail IMAP bridge
 - [x] Deployed
 10.0.0.9:1143
+'To Delete' folder created
 - - -
 
 ### Program #1 - Email worker
@@ -8,25 +9,37 @@
 - [ ] Test cases
 - [ ] Deployed
 
-get emails using IMAP protcol from mailbox
+get emails using IMAP protcol from mailbox, load email ID's into array
 
-for any where sender is seek or Linkedin, AND subject contains Job Alert
 
-open the email
+keep only emails where sender is in list below
+remove emails where subject contains text from list below that
+remove all others
 
-extract links from email
+Senders:
+jobs-noreply@linkedin.com
+jobalerts-noreply@linkedin.com
+noreply@s.seek.com.au
+jobmail@s.seek.com.au
 
-generate jobID (URL unique ID) from linkedin/seek link
+Subject contains:
+'Your Application'
 
-check for duplicates against object store (MinIO bucket)
+open the emails one at a time
+if it is already marked as read, skip it and move on to next
+if it was sent more than 90 days ago, move it into To Delete folder
 
-send jobID & URL to queue
+otherwise, extract links from body (any text beginning with 'https://' up until next whitespace) 
+load links into array if they contain either 'linkedin.com/jobs' or 'seek.com/job'
 
-add jobID, timestamp to Object store. `{status: "new"}`
+generate jobID's (URL unique ID) from linkedin/seek link
 
-&nbsp;
+check for duplicates against database
+for any unique (new) jobs, send jobID & URL to queue
 
-once all URLs in an email are processed, mark as read and move to next email
+add jobID, timestamp to database `{status: "new"}`
+
+remove email from array and send to To Delete folder and move to next email
 - - -
 ### Scraper Queue - NATS Jetstream
 - [ ] Deployed
