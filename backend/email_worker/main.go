@@ -9,25 +9,36 @@ func main() {
 
         // getInbox
 
+        // loop email envelopes
+
+            // filter out by sender addresses
+
+            // filter out by subjects
+
+            // add email (sender, data, subject, body, status) to list
+
         // loop emails
 
-            // skip read emails
-
-            // sender in allow list?
-
-            // subject contains "Job Alert"?
+            // email already read?
+                //remove from list
 
             // email older than 90 days?
                 // moveToDelete
-                // continue
+                // remove from list
 
-            // getMail
+        // loop filtered emails
 
-            // extractJobs
+            // extractJobs from body
 
-            // create job records
+            // loop jobs in email
 
-            // publish queue
+                // generate jobID
+
+                // check for unique jobID
+
+                // create job record
+
+                // publish to correct queue
 
             // moveToDelete
 
