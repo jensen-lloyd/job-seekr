@@ -1,13 +1,13 @@
 package main
 
-type InboxItem struct {
-    // TODO
-}
+import(
+    "time"
+)
 
 type Email struct {
-    // TODO
-}
-
-type Config struct {
-    // TODO
+    ID      uint32
+    Sender  string
+    Subject string
+    Date    time.Time
+    Body    string
 }
