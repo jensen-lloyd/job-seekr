@@ -1,11 +1,11 @@
 package main
 
 import (
+    "fmt"
     "log"
     "time"
-    "fmt"
 
-    "github.com/emersion/go-imap"
+    //"github.com/emersion/go-imap"
 )
 
 
@@ -15,7 +15,7 @@ func main() {
 	username := "jl.110@protonmail.com"
 	password := "SSF9Tigm7mIFk4iKhD18VQ"
 
-    fmt.Println("Connecting to %u", server)
+    fmt.Println("Connecting to ", server)
 
     Outer:
 	for {
@@ -28,77 +28,20 @@ func main() {
 			continue Outer
 		}
 
-		log.Println("Connected successfully!")
+		log.Println("Connected successfully")
 
 
-
-        // getInbox
-        emails := make([]Email, 0)
-        mbox, err := c.Select("INBOX", true)
-
-        criteria := imap.NewSearchCriteria()
-        criteria.WithoutFlags = []string{imap.SeenFlag}
-
-        ids, err := c.Search(criteria)
+        emails, err := getMail(c)
         if err != nil {
             log.Fatal(err)
+        } else {
+            log.Println("Pulled all unread emails from server")
         }
 
-
-        if err != nil {
-            log.Fatal(err)
-        }
-
-        _ = mbox //to make the compiler shut up!
+        _ = emails
 
 
-
-
-        seqset := new(imap.SeqSet)
-        seqset.AddNum(ids...)
-
-        messages := make(chan *imap.Message, 10)
-        done := make(chan error, 1)
-
-        go func() {
-            section := &imap.BodySectionName{}
-            done <- c.Fetch(seqset, []imap.FetchItem{
-                imap.FetchUid,
-                imap.FetchEnvelope,
-                section.FetchItem(),
-            }, messages)
-        }()
-
-        for msg := range messages {
-            if msg.Envelope == nil {
-                continue
-            }
-
-            if len(msg.Envelope.From) > 0 {
-                from := msg.Envelope.From[0]
-
-                emails = append(emails, Email{
-                ID:      msg.Uid,
-                Sender:  from.MailboxName + from.HostName,
-                Subject: msg.Envelope.Subject,
-                Date:    msg.Envelope.Date,
-                Body:    "body",
-                })
-
-
-            }
-
-        }
-
-        if err := <-done; err != nil {
-            log.Fatal(err)
-        }
-
-
-
-
-
-        // loop email envelopes
+        // loop sorted emails to filter LinkedIn/Seek
 
             // filter out by sender addresses
 
@@ -106,7 +49,7 @@ func main() {
 
             // add email (sender, data, subject, body, status) to list
 
-        // loop emails
+        // loop job emails to filter relevant
 
             // email already read?
                 //remove from list
