@@ -28,8 +28,6 @@ func getMail(c *client.Client) ([]Email, error) {
 
 
 
-
-
     seqset := new(imap.SeqSet)
     seqset.AddNum(ids...)
 
@@ -54,7 +52,13 @@ func getMail(c *client.Client) ([]Email, error) {
         }
 
         // get body
-        section := &imap.BodySectionName{}
+        //section := &imap.BodySectionName{}
+        
+        section := &imap.BodySectionName{
+            Peek: true,
+        }
+
+
         body := ""
 
         if r := msg.GetBody(section); r != nil {
@@ -78,6 +82,7 @@ func getMail(c *client.Client) ([]Email, error) {
         Date:       msg.Envelope.Date,
         Body:       body,
         })
+
 
 
 

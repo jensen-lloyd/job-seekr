@@ -4,6 +4,7 @@ import (
     "fmt"
     "log"
     "time"
+    "strconv"
 
     //"github.com/emersion/go-imap"
 )
@@ -27,8 +28,8 @@ func main() {
 			time.Sleep(15 * time.Minute)
 			continue Outer
 		}
-
 		log.Println("Connected successfully")
+
 
 
         emails, err := getMail(c)
@@ -38,25 +39,32 @@ func main() {
             log.Println("Pulled all unread emails from server")
         }
 
-        _ = emails
+
+        emails, old_emails, err := filterEmails(c, emails)
+        if err != nil {
+            log.Fatal(err)
+        } else {
+            log.Println("Filtered emails for sites (sender addr & subj) and age")
+        }
+        log.Println("Old emails to move: " + strconv.Itoa(len(old_emails)))
 
 
-        // loop sorted emails to filter LinkedIn/Seek
 
-            // filter out by sender addresses
+        // move old job emails to Job Hunting/To Delete
+        for _, email := range old_emails {
 
-            // filter out by subjects
+            err := moveToDelete(c, email.ID)
+            if err != nil {
+                log.Printf("Failed to move email %d: %v", email.ID, err)
+                continue
+            }
 
-            // add email (sender, data, subject, body, status) to list
+            log.Printf("Moved old email: %s", email.Subject)
+        }
 
-        // loop job emails to filter relevant
 
-            // email already read?
-                //remove from list
 
-            // email older than 90 days?
-                // moveToDelete
-                // remove from list
+
 
         // loop filtered emails
 

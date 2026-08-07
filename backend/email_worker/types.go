@@ -12,3 +12,11 @@ type Email struct {
     Date       time.Time
     Body       string
 }
+
+
+type Job struct {
+    ID uint32 //hash of URL
+    Platform string
+    JobURL string
+    DateAdded time.Time
+}
