@@ -83,10 +83,9 @@ func getMail(c *client.Client) ([]Email, error) {
         Body:       body,
         })
 
-
-
-
     }
+
+
 
     // check whether fetch failed
     if err := <-done; err != nil {

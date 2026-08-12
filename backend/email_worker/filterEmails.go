@@ -3,11 +3,9 @@ package main
 import (
     "strings"
     "time"
-
-    "github.com/emersion/go-imap/client"
 )
 
-func filterEmails(c *client.Client, input_emails []Email) ([]Email, []Email, error) {
+func filterEmails(input_emails []Email) ([]Email, []Email, error) {
     cutoff := time.Now().AddDate(0, -1, 0) //set cutoff as 1 month before current time
 
     var job_emails []Email //makes slice we will store positive results in

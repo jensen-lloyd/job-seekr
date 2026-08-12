@@ -5,8 +5,6 @@ import (
     "log"
     "time"
     "strconv"
-
-    //"github.com/emersion/go-imap"
 )
 
 
@@ -16,19 +14,18 @@ func main() {
 	username := "jl.110@protonmail.com"
 	password := "SSF9Tigm7mIFk4iKhD18VQ"
 
-    fmt.Println("Connecting to ", server)
 
     Outer:
 	for {
-        fmt.Println("starting for loop")
+        fmt.Println("Connecting to IMAP @ ", server)
 		c, err := connectIMAP(server, username, password)
 		if err != nil {
 			log.Printf("Failed to connect: %v", err)
-			log.Println("Retrying in 15 minutes...")
-			time.Sleep(15 * time.Minute)
+			log.Println("Retrying...")
+			time.Sleep(5 * time.Second)
 			continue Outer
 		}
-		log.Println("Connected successfully")
+		log.Println("Connected to IMAP server successfully")
 
 
 
@@ -40,7 +37,7 @@ func main() {
         }
 
 
-        emails, old_emails, err := filterEmails(c, emails)
+        emails, old_emails, err := filterEmails(emails)
         if err != nil {
             log.Fatal(err)
         } else {
@@ -67,26 +64,32 @@ func main() {
 
 
         // loop filtered emails
+        jobs, err := extractJobs(emails)
+        if err != nil {
+            log.Fatal(err)
+        } else {
+            log.Printf("%d jobs extracted from %d emails", len(jobs), len(emails))
+        }
+        fmt.Print(jobs)
 
-            // extractJobs from body
 
-            // loop jobs in email
 
-                // generate jobID
+        // check for unique jobID
 
-                // check for unique jobID
+        // create job record
 
-                // create job record
+        // publish to correct queue
 
-                // publish to correct queue
+        // moveToDelete
+        
 
-            // moveToDelete
+
 
 
         c.Logout()
 
-        fmt.Println("Processing complete. Waiting 15mins\n\n")
-        time.Sleep(15 * time.Minute)
+        fmt.Println("Processing complete. Waiting 5mins\n\n")
+        time.Sleep(5 * time.Minute)
 
     }
 

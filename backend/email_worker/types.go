@@ -15,7 +15,7 @@ type Email struct {
 
 
 type Job struct {
-    ID uint32 //hash of URL
+    ID string //hash of job URL
     Platform string
     JobURL string
     DateAdded time.Time
