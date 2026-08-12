@@ -4,7 +4,7 @@ import (
     "fmt"
     "log"
     "time"
-    "strconv"
+    //"strconv"
 )
 
 
@@ -33,7 +33,7 @@ func main() {
         if err != nil {
             log.Fatal(err)
         } else {
-            log.Println("Pulled all unread emails from server")
+            log.Printf("Pulled all %d unread emails from server", len(emails))
         }
 
 
@@ -43,12 +43,12 @@ func main() {
         } else {
             log.Println("Filtered emails for sites (sender addr & subj) and age")
         }
-        log.Println("Old emails to move: " + strconv.Itoa(len(old_emails)))
+        log.Printf("Old emails to move: %d", len(old_emails))
 
 
 
         // move old job emails to Job Hunting/To Delete
-        for _, email := range old_emails {
+        for i, email := range old_emails {
 
             err := moveToDelete(c, email.ID)
             if err != nil {
@@ -56,7 +56,7 @@ func main() {
                 continue
             }
 
-            log.Printf("Moved old email: %s", email.Subject)
+            log.Printf("Moved old email %d/%d: %s", i, len(old_emails), email.Subject)
         }
 
 
@@ -64,6 +64,7 @@ func main() {
 
 
         // loop filtered emails
+        log.Println("Extracting jobs from emails")
         jobs, err := extractJobs(emails)
         if err != nil {
             log.Fatal(err)

@@ -6,7 +6,7 @@ import (
 )
 
 func filterEmails(input_emails []Email) ([]Email, []Email, error) {
-    cutoff := time.Now().AddDate(0, 0, 7) //set cutoff as 1 week before current time
+    cutoff := time.Now().AddDate(0, 0, -7) //set cutoff as 1 week before current time
 
     var job_emails []Email //makes slice we will store positive results in
     var old_emails []Email //slice to store results in for emails to be deleted
@@ -21,7 +21,6 @@ func filterEmails(input_emails []Email) ([]Email, []Email, error) {
         if email.SenderName == "SEEK Job Alerts" &&
            email.SenderAddr == "jobmail@s.seek.com.au" {
 
-            job_emails = append(job_emails, email)
             isJobEmail = true
         }
 
@@ -29,23 +28,22 @@ func filterEmails(input_emails []Email) ([]Email, []Email, error) {
         if email.SenderName == "LinkedIn Job Alerts" &&
            email.SenderAddr == "jobalerts-noreply@linkedin.com" {
 
-            job_emails = append(job_emails, email)
             isJobEmail = true
         }
+
 
         // LinkedIn company hiring emails
-        if email.SenderAddr == "jobs-noreply@linkedin.com" &&
-           strings.Contains(strings.ToLower(email.Subject), "is hiring") {
+        if email.SenderAddr == "jobs-noreply@linkedin.com" && 
+            !strings.Contains(strings.ToLower(email.Subject), "application") {
 
-            job_emails = append(job_emails, email)
             isJobEmail = true
         }
 
+
         // SEEK Recommendations
-        if email.SenderName == "Seek Recommendations" &&
+        if email.SenderName == "SEEK Recommendations" &&
            email.SenderAddr == "noreply@s.seek.com.au" {
 
-            job_emails = append(job_emails, email)
             isJobEmail = true
         }
 
@@ -62,7 +60,6 @@ func filterEmails(input_emails []Email) ([]Email, []Email, error) {
             old_emails = append(old_emails, email)
             continue
         }
-
 
         // Otherwise it's a valid current job email
         job_emails = append(job_emails, email)
