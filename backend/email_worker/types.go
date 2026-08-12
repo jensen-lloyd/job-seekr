@@ -13,10 +13,9 @@ type Email struct {
     Body       string
 }
 
-
 type Job struct {
-    ID string //hash of job URL
-    Platform string
-    JobURL string
-    DateAdded time.Time
+	ID       string    `bson:"id"` //hash of JobURL 
+	Platform string    `bson:"platform"`
+	JobURL   string    `bson:"job_url"` //is just the job number on respective platform
+	DateAdded time.Time `bson:"date_added"`
 }

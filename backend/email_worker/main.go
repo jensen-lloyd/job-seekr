@@ -4,7 +4,6 @@ import (
     "fmt"
     "log"
     "time"
-    //"strconv"
 )
 
 
@@ -28,7 +27,25 @@ func main() {
 		log.Println("Connected to IMAP server successfully")
 
 
+        // Connect to and initialise DB in background
+        mongoReady := make(chan bool)
 
+        go func() {
+            err := initialiseMongo()
+            if err != nil {
+                log.Printf("MongoDB initialisation failed: %v", err)
+                mongoReady <- false
+                return
+            }
+
+            mongoReady <- true
+
+        }()
+
+
+
+
+        // Pull unread emails from server
         emails, err := getMail(c)
         if err != nil {
             log.Fatal(err)
@@ -43,21 +60,24 @@ func main() {
         } else {
             log.Println("Filtered emails for sites (sender addr & subj) and age")
         }
-        log.Printf("Old emails to move: %d", len(old_emails))
 
 
 
         // move old job emails to Job Hunting/To Delete
-        for i, email := range old_emails {
+        // performed in a goroutine asynchonously
+        go func() {
+            for i, email := range old_emails {
 
-            err := moveToDelete(c, email.ID)
-            if err != nil {
-                log.Printf("Failed to move email %d: %v", email.ID, err)
-                continue
+                err := moveToDelete(c, email.ID)
+                if err != nil {
+                    log.Printf("Failed to move email %d: %v", email.ID, err)
+                    continue
+                }
+
+                log.Printf("Moved old email %d/%d: %s", i+1, len(old_emails), email.Subject)
             }
-
-            log.Printf("Moved old email %d/%d: %s", i, len(old_emails)+1, email.Subject)
-        }
+            log.Printf("Successfully moved %d old emails", len(old_emails))
+        }()
 
 
 
@@ -75,13 +95,40 @@ func main() {
 
 
 
-        // check for unique jobID
+        // Check if DB successfully connected and initialised
+        ready := <- mongoReady
+        if !ready {
+            log.Fatal("Unable to connect to MongoDB. Cannot proceed with operations")
+        } else if ready {
+            log.Println("MongoDB connected successfully")
+        }
 
-        // create job record
+        // Process each job, add to DB and queue
+        for _, job := range jobs {
+            // check for unique jobID
+            exists, err := jobExists(job.ID)
 
-        // publish to correct queue
+            if err != nil {
+                log.Printf("MongoDB lookup failed: %v", err)
+                continue
+            }
 
-        // moveToDelete
+            if exists {
+                log.Printf("Job already exists: %s", job.ID)
+                continue
+            }
+
+            // Job doesn't exist
+            // Continue processing it
+
+
+
+            // create job record
+
+            // publish to correct queue
+
+            // moveToDelete
+        }
         
 
 
@@ -93,7 +140,5 @@ func main() {
         time.Sleep(5 * time.Minute)
 
     }
-
-
 
 }
