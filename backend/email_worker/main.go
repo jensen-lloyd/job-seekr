@@ -60,12 +60,16 @@ func main() {
         } else {
             log.Println("Filtered emails for sites (sender addr & subj) and age")
         }
+        log.Printf("%d old emails to be moved\n", len(old_emails))
 
 
 
         // move old job emails to Job Hunting/To Delete
         // performed in a goroutine asynchonously
         go func() {
+            if len(old_emails) == 0 {
+                return
+            }
             for i, email := range old_emails {
 
                 err := moveToDelete(c, email.ID)
@@ -91,7 +95,7 @@ func main() {
         } else {
             log.Printf("%d jobs extracted from %d emails", len(jobs)+1, len(emails))
         }
-        fmt.Print(jobs)
+        fmt.Println(jobs)
 
 
 
@@ -102,6 +106,8 @@ func main() {
         } else if ready {
             log.Println("MongoDB connected successfully")
         }
+
+
 
         // Process each job, add to DB and queue
         for _, job := range jobs {
