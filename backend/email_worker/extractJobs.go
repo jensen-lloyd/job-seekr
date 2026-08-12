@@ -127,11 +127,6 @@ func extractJobs(emails []Email) ([]Job, error) {
         }
 
 
-
-        if i > 10 {
-            return jobs, nil
-        }
-
     }
 
 
