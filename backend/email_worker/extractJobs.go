@@ -75,6 +75,10 @@ func extractJobs(emails []Email) ([]Job, error) {
         for _, match := range linkedinMatches {
             jobID := match[1]
 
+            if len(jobID) < 9 {
+                continue
+            }
+
             // Set platform
             platform := "linkedin"
 
@@ -99,6 +103,10 @@ func extractJobs(emails []Email) ([]Job, error) {
             //Get jobID from email URL
             jobID, err := getSeekJobID(match)
             if err != nil {
+                continue
+            }
+
+            if len(jobID) < 7 {
                 continue
             }
 
