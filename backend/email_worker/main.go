@@ -56,7 +56,7 @@ func main() {
                 continue
             }
 
-            log.Printf("Moved old email %d/%d: %s", i, len(old_emails), email.Subject)
+            log.Printf("Moved old email %d/%d: %s", i, len(old_emails)+1, email.Subject)
         }
 
 
@@ -64,12 +64,12 @@ func main() {
 
 
         // loop filtered emails
-        log.Println("Extracting jobs from emails")
+        log.Printf("Extracting jobs from %d emails\n", len(emails))
         jobs, err := extractJobs(emails)
         if err != nil {
             log.Fatal(err)
         } else {
-            log.Printf("%d jobs extracted from %d emails", len(jobs), len(emails))
+            log.Printf("%d jobs extracted from %d emails", len(jobs)+1, len(emails))
         }
         fmt.Print(jobs)
 
@@ -89,7 +89,7 @@ func main() {
 
         c.Logout()
 
-        fmt.Println("Processing complete. Waiting 5mins\n\n")
+        log.Println("Processing complete. Waiting 5mins\n\n")
         time.Sleep(5 * time.Minute)
 
     }

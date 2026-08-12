@@ -67,7 +67,7 @@ func extractJobs(emails []Email) ([]Job, error) {
     //loop to find all relevant URLs in email
 
     for i, email := range emails { 
-        log.Printf("Processing URLs from email %d/%d\n", i, len(emails))
+        log.Printf("Processing URLs from email %d/%d\n", i+1, len(emails))
 
         //process Linkedin URLs
         linkedinMatches := linkedinRegex.FindAllStringSubmatch(email.Body, -1)
