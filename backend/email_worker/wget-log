@@ -1,15 +1,0 @@
---2026-08-12 17:36:33--  https://www.linkedin.com/comm/jobs/view/4443042599/?refId=T2iyl0yBOqTmBfAk8tMetg%3D%3D
-Resolving www.linkedin.com (www.linkedin.com)... 2a06:98c1:310b::ac40:92d7, 2a06:98c1:3109::6812:2929, 172.64.146.215, ...
-Connecting to www.linkedin.com (www.linkedin.com)|2a06:98c1:310b::ac40:92d7|:443... connected.
-HTTP request sent, awaiting response... 307 Temporary Redirect
-Location: https://www.linkedin.com/uas/login?session_redirect=%2Fjobs%2Fview%2F4443042599%2F%3FrefId%3DT2iyl0yBOqTmBfAk8tMetg%253D%253D&skipRedirect=true [following]
---2026-08-12 17:36:34--  https://www.linkedin.com/uas/login?session_redirect=%2Fjobs%2Fview%2F4443042599%2F%3FrefId%3DT2iyl0yBOqTmBfAk8tMetg%253D%253D&skipRedirect=true
-Reusing existing connection to [www.linkedin.com]:443.
-HTTP request sent, awaiting response... 200 OK
-Length: unspecified [text/html]
-Saving to: ‘index.html?refId=T2iyl0yBOqTmBfAk8tMetg==’
-
-           index.html     [<=>                      ]       0  --.-KB/s               index.html?refId=T2iy     [ <=>                     ]  50.85K  --.-KB/s    in 0.04s   
-
-2026-08-12 17:36:34 (1.33 MB/s) - ‘index.html?refId=T2iyl0yBOqTmBfAk8tMetg==’ saved [52071]
-
