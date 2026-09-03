@@ -8,8 +8,7 @@ import (
 
 
 func main() {
-	//server := "10.0.0.9:1143"
-    server := "127.0.0.1:1143"
+	server := "10.0.0.9:1143"
 	username := "jl.110@protonmail.com"
 	password := "SSF9Tigm7mIFk4iKhD18VQ"
 
