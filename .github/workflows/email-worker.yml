@@ -1,0 +1,41 @@
+name: Build email-worker
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'email-worker/**'
+      - '.github/workflows/email-worker.yml'
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/email-worker
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./email-worker
+          file: ./email-worker/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/email-worker:dev
