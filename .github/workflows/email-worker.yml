@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'email-worker/**'
+      - 'backend/email-worker/**'
       - '.github/workflows/email-worker.yml'
 
 permissions:
@@ -34,8 +34,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ./email-worker
-          file: ./email-worker/Dockerfile
+          context: ./backend/email-worker
+          file: ./backend/email-worker/Dockerfile
           push: true
           tags: |
             ghcr.io/${{ github.repository }}/email-worker:dev
