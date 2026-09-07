@@ -127,3 +127,30 @@ func addJob(job Job) error {
     _, err := jobsCollection.InsertOne(context.Background(), job)
     return err
 }
+
+
+func dumpJobs() {
+    opts := options.Find().SetSort(bson.D{{Key: "date_added", Value: 1}})
+
+    cursor, err := jobsCollection.Find(context.Background(), bson.D{}, opts)
+    if err != nil {
+        log.Printf("Failed to dump jobs: %v", err)
+        return
+    }
+    defer cursor.Close(context.Background())
+
+    for cursor.Next(context.Background()) {
+        var job Job
+        if err := cursor.Decode(&job); err != nil {
+            log.Printf("Failed to decode job: %v", err)
+            continue
+        }
+
+        log.Printf("%s | %s | %s | %s",
+            job.DateAdded.Format("2006-01-02 15:04:05"),
+            job.Platform,
+            job.JobURL,
+            job.ID,
+        )
+    }
+}
