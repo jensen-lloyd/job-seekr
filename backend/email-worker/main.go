@@ -133,16 +133,21 @@ func main() {
 
 
             // create job record
+            job.DateAdded = time.Now()
 
-                //TODO: add it to db
+            err_db := addJob(job)
+            if err_db != nil {
+                log.Printf("Failed to add job to MongoDB: %v", err)
+                continue
+            }
+
+            log.Printf("Added to DB job %d/%d: %s", i+1, len(jobs), (job.Platform + " " + job.JobURL))
 
 
             // publish to correct queue
 
             // moveToDelete
 
-            // Done!
-            log.Printf("Added job %d/%d: %s", i+1, len(jobs), (job.Platform + " " + job.JobURL))
         }
         
 

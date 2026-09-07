@@ -120,7 +120,7 @@ func extractJobs(emails []Email) ([]Job, error) {
                 ID: fmt.Sprintf("%x", hash),
                 Platform: platform,
                 JobURL: jobID,
-                DateAdded: time.Now(),
+                DateAdded: time.Now(), //placeholder - gets updated later on when adding job to DB
             })
 
 
