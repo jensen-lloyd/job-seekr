@@ -77,8 +77,8 @@ func main() {
 
         // move old job emails to Job Hunting/To Delete
         // performed in a goroutine asynchonously
+        oldEmailsDone := make(chan bool)
         if delete_old == true {
-            oldEmailsDone := make(chan bool)
             go func() {
                 not_moved := 0
                 if len(old_emails) == 0 {
@@ -191,7 +191,7 @@ func main() {
 
 
         // Close connection to SMTP server
-        IMAP_done := <- oldEmailsDone
+        _ = <- oldEmailsDone
         c.Logout()
         log.Printf("IMAP connection closed")
 
