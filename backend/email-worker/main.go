@@ -30,16 +30,16 @@ func main() {
         mongoReady := make(chan bool)
 
         go func() {
-            err := connectMongo()
-            if err != nil {
-                log.Printf("MongoDB connection failed: %v", err)
+            err_connect := connectMongo()
+            if err_connect != nil {
+                log.Printf("MongoDB connection failed: %v", err_connect)
                 mongoReady <- false
                 return
             }
 
-            err := initialiseMongo()
-            if err != nil {
-                log.Printf("MongoDB initialisation failed: %v", err)
+            err_init := initialiseMongo()
+            if err_init != nil {
+                log.Printf("MongoDB initialisation failed: %v", err_init)
                 mongoReady <- false
                 return
             }
