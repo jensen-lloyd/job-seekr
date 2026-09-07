@@ -85,6 +85,7 @@ func main() {
             go func() {
                 not_moved := 0
                 if len(old_emails) == 0 {
+                    oldEmailsDone <- true
                     return
                 }
                 for i, email := range old_emails {
