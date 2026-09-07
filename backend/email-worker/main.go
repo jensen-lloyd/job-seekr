@@ -192,9 +192,8 @@ func main() {
 
         // Close connection to SMTP server
         IMAP_done := <- oldEmailsDone
-        if IMAP_done {
-            c.Logout()
-        }
+        c.Logout()
+        log.Printf("IMAP connection closed")
 
         // Dump DB contents oldest to newest
         if db_dump == true {
