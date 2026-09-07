@@ -12,6 +12,7 @@ func main() {
 	username := "jl.110@protonmail.com"
 	password := "SSF9Tigm7mIFk4iKhD18VQ"
 
+    db_dump := false
     delete_when_done := true
     delete_old := true
     email_age_cutoff := 7 //age of email in days before it is classed 'old' and ignored
@@ -190,8 +191,10 @@ func main() {
         c.Logout()
 
         // Dump DB contents oldest to newest
-        log.Printf("MongoDB contents (newest is last):")
-        dumpJobs()
+        if db_dump == true {
+            log.Printf("MongoDB contents (newest is last):")
+            dumpJobs()
+        }
 
 
         log.Println("Processing complete. Waiting 5mins\n\n")
