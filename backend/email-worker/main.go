@@ -13,8 +13,8 @@ func main() {
 	password := "SSF9Tigm7mIFk4iKhD18VQ"
 
     delete_when_done := true
-    delete_old := false
-    email_age_cutoff := 1 //age of email in days before it is classed 'old' and ignored
+    delete_old := true
+    email_age_cutoff := 7 //age of email in days before it is classed 'old' and ignored
 
 
     Outer:
