@@ -169,7 +169,7 @@ func main() {
         if delete_when_done == true {
             not_moved := 0
             if len(emails) == 0 {
-                return
+                log.Printf("No processed emails to delete")
             }
             for i, email := range emails {
 
