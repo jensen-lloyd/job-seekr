@@ -137,10 +137,12 @@ func main() {
                 //TODO: add it to db
 
 
-            log.Printf("Added job %d/%d: %s", i+1, len(jobs), (job.Platform + " " + job.JobURL))
             // publish to correct queue
 
             // moveToDelete
+
+            // Done!
+            log.Printf("Added job %d/%d: %s", i+1, len(jobs), (job.Platform + " " + job.JobURL))
         }
         
 
