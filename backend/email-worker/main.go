@@ -92,6 +92,16 @@ func main() {
 
 
 
+        // Check if DB successfully connected and initialised
+        ready := <- mongoReady
+        if !ready {
+            log.Fatal("Unable to connect to MongoDB. Cannot proceed with operations")
+        } else if ready {
+            log.Println("MongoDB connected successfully")
+        }
+
+
+
 
         // loop filtered emails
         log.Printf("Extracting jobs from %d emails\n", len(emails))
@@ -102,16 +112,6 @@ func main() {
             log.Printf("%d jobs extracted from %d emails", len(jobs)+1, len(emails))
         }
         fmt.Println(jobs)
-
-
-
-        // Check if DB successfully connected and initialised
-        ready := <- mongoReady
-        if !ready {
-            log.Fatal("Unable to connect to MongoDB. Cannot proceed with operations")
-        } else if ready {
-            log.Println("MongoDB connected successfully")
-        }
 
 
 
