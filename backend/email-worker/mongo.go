@@ -121,3 +121,9 @@ func jobExists(jobID string) (bool, error) {
 
 	return count > 0, nil
 }
+
+
+func addJob(job Job) error {
+    _, err := jobsCollection.InsertOne(context.Background(), job)
+    return err
+}
