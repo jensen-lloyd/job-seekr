@@ -118,7 +118,7 @@ func main() {
         // Process each job, add to DB and queue
         log.Printf("Adding jobs to DB and queue")
         for i, job := range jobs {
-            log.Printf("Added job %d/%d: %s", i+1, len(jobs), (job.ID + job.JobURL))
+            log.Printf("Added job %d/%d: %s", i+1, len(jobs), (job.Platform + " " + job.JobURL))
             // check for unique jobID
             exists, err := jobExists(job.ID)
 
@@ -131,10 +131,6 @@ func main() {
                 log.Printf("Job already exists: %s", job.ID)
                 continue
             }
-
-            // Job doesn't exist
-            // Continue processing it
-
 
 
             // create job record
