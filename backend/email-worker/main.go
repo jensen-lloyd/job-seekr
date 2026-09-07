@@ -182,9 +182,9 @@ func main() {
                     continue
                 }
 
-                log.Printf("Moved old email %d/%d: %s", i+1, len(emails), email.Subject)
+                log.Printf("Moved completed email %d/%d: %s", i+1, len(emails), email.Subject)
             }
-            log.Printf("Successfully moved %d of %d old emails", (len(emails)-not_moved), len(emails))
+            log.Printf("Successfully moved %d of %d completed emails", (len(emails)-not_moved), len(emails))
         }
 
 
