@@ -78,6 +78,7 @@ func main() {
         // move old job emails to Job Hunting/To Delete
         // performed in a goroutine asynchonously
         if delete_old == true {
+            oldEmailsDone := make chan(bool bool)
             go func() {
                 not_moved := 0
                 if len(old_emails) == 0 {
@@ -93,6 +94,7 @@ func main() {
                             log.Printf("Moved old email %d/%d: %s", i+1, len(old_emails), email.Subject)
                 }
                 log.Printf("Successfully moved %d of %d old emails", (len(old_emails)-not_moved), len(old_emails))
+                oldEmailsDone <- true
             }()
         }
 
@@ -188,7 +190,10 @@ func main() {
 
 
         // Close connection to SMTP server
-        c.Logout()
+        IMAP_done := <- oldEmailsDone
+        if IMAP_done {
+            c.Logout()
+        }
 
         // Dump DB contents oldest to newest
         if db_dump == true {
