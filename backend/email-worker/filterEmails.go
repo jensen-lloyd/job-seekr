@@ -5,8 +5,8 @@ import (
     "time"
 )
 
-func filterEmails(input_emails []Email) ([]Email, []Email, error) {
-    cutoff := time.Now().AddDate(0, 0, -7) //set cutoff as 1 week before current time
+func filterEmails(input_emails []Email, age_cutoff int) ([]Email, []Email, error) {
+    cutoff := time.Now().AddDate(0, 0, -age_cutoff) //set cutoff as 1 week before current time
 
     var job_emails []Email //makes slice we will store positive results in
     var old_emails []Email //slice to store results in for emails to be deleted

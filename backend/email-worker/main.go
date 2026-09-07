@@ -12,6 +12,10 @@ func main() {
 	username := "jl.110@protonmail.com"
 	password := "SSF9Tigm7mIFk4iKhD18VQ"
 
+    delete_when_done := true
+    delete_old := true
+    email_age_cutoff := 7 //age of email in days before it is classed 'old' and ignored
+
 
     Outer:
 	for {
@@ -60,7 +64,7 @@ func main() {
         }
 
 
-        emails, old_emails, err := filterEmails(emails)
+        emails, old_emails, err := filterEmails(emails, email_age_cutoff)
         if err != nil {
             log.Fatal(err)
         } else {
@@ -72,22 +76,24 @@ func main() {
 
         // move old job emails to Job Hunting/To Delete
         // performed in a goroutine asynchonously
-        go func() {
-            not_moved := 0
-            if len(old_emails) == 0 {
-                return
-            }
-            for i, email := range old_emails {
-
-                err := moveToDelete(c, email.ID)
-                if err != nil {
-                    log.Printf("Failed to move email %d: %v", email.ID, err)
-                    continue
+        if delete_old == true {
+            go func() {
+                not_moved := 0
+                if len(old_emails) == 0 {
+                    return
                 }
-                        log.Printf("Moved old email %d/%d: %s", i+1, len(old_emails), email.Subject)
-            }
-            log.Printf("Successfully moved %d of %d old emails", (len(old_emails)-not_moved), len(old_emails))
-        }()
+                for i, email := range old_emails {
+
+                    err := moveToDelete(c, email.ID)
+                    if err != nil {
+                        log.Printf("Failed to move email %d: %v", email.ID, err)
+                        continue
+                    }
+                            log.Printf("Moved old email %d/%d: %s", i+1, len(old_emails), email.Subject)
+                }
+                log.Printf("Successfully moved %d of %d old emails", (len(old_emails)-not_moved), len(old_emails))
+            }()
+        }
 
 
 
@@ -162,24 +168,26 @@ func main() {
 
         // move processed job emails to Job Hunting/To Delete
         // performed in a goroutine asynchonously
-        go func() {
-            not_moved := 0
-            if len(emails) == 0 {
-                return
-            }
-            for i, email := range emails {
-
-                err := moveToDelete(c, email.ID)
-                if err != nil {
-                    log.Printf("Failed to move email %d: %v", email.ID, err)
-                    not_moved += 1
-                    continue
+        if delete_when_done == true {
+            go func() {
+                not_moved := 0
+                if len(emails) == 0 {
+                    return
                 }
+                for i, email := range emails {
 
-                log.Printf("Moved old email %d/%d: %s", i+1, len(emails), email.Subject)
-            }
-            log.Printf("Successfully moved %d of %d old emails", (len(emails)-not_moved), len(emails))
-        }()
+                    err := moveToDelete(c, email.ID)
+                    if err != nil {
+                        log.Printf("Failed to move email %d: %v", email.ID, err)
+                        not_moved += 1
+                        continue
+                    }
+
+                    log.Printf("Moved old email %d/%d: %s", i+1, len(emails), email.Subject)
+                }
+                log.Printf("Successfully moved %d of %d old emails", (len(emails)-not_moved), len(emails))
+            }()
+        }
 
 
         // Close connection to SMTP server
