@@ -169,24 +169,22 @@ func main() {
         // move processed job emails to Job Hunting/To Delete
         // performed in a goroutine asynchonously
         if delete_when_done == true {
-            go func() {
-                not_moved := 0
-                if len(emails) == 0 {
-                    return
-                }
-                for i, email := range emails {
+            not_moved := 0
+            if len(emails) == 0 {
+                return
+            }
+            for i, email := range emails {
 
-                    err := moveToDelete(c, email.ID)
-                    if err != nil {
-                        log.Printf("Failed to move email %d: %v", email.ID, err)
-                        not_moved += 1
-                        continue
-                    }
-
-                    log.Printf("Moved old email %d/%d: %s", i+1, len(emails), email.Subject)
+                err := moveToDelete(c, email.ID)
+                if err != nil {
+                    log.Printf("Failed to move email %d: %v", email.ID, err)
+                    not_moved += 1
+                    continue
                 }
-                log.Printf("Successfully moved %d of %d old emails", (len(emails)-not_moved), len(emails))
-            }()
+
+                log.Printf("Moved old email %d/%d: %s", i+1, len(emails), email.Subject)
+            }
+            log.Printf("Successfully moved %d of %d old emails", (len(emails)-not_moved), len(emails))
         }
 
 
