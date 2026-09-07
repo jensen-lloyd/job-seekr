@@ -73,6 +73,7 @@ func main() {
         // move old job emails to Job Hunting/To Delete
         // performed in a goroutine asynchonously
         go func() {
+            not_moved := 0
             if len(old_emails) == 0 {
                 return
             }
@@ -83,11 +84,11 @@ func main() {
                     log.Printf("Failed to move email %d: %v", email.ID, err)
                     continue
                 }
-
-                log.Printf("Moved old email %d/%d: %s", i+1, len(old_emails), email.Subject)
+                        log.Printf("Moved old email %d/%d: %s", i+1, len(old_emails), email.Subject)
             }
-            log.Printf("Successfully moved %d old emails", len(old_emails))
+            log.Printf("Successfully moved %d of %d old emails", (len(old_emails)-not_moved), len(old_emails))
         }()
+
 
 
 
@@ -162,6 +163,7 @@ func main() {
         // move processed job emails to Job Hunting/To Delete
         // performed in a goroutine asynchonously
         go func() {
+            not_moved := 0
             if len(emails) == 0 {
                 return
             }
@@ -170,12 +172,13 @@ func main() {
                 err := moveToDelete(c, email.ID)
                 if err != nil {
                     log.Printf("Failed to move email %d: %v", email.ID, err)
+                    not_moved += 1
                     continue
                 }
 
                 log.Printf("Moved old email %d/%d: %s", i+1, len(emails), email.Subject)
             }
-            log.Printf("Successfully moved %d old emails", len(emails))
+            log.Printf("Successfully moved %d of %d old emails", (len(emails)-not_moved), len(emails))
         }()
 
 
