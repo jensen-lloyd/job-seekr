@@ -152,6 +152,10 @@ func main() {
         
 
 
+        // Dump DB contents oldest to newest
+        log.Printf("MongoDB contents (newest is last):")
+        dumpJobs()
+
 
 
         c.Logout()
