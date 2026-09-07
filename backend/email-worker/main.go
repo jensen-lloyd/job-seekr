@@ -117,17 +117,25 @@ func main() {
 
         // Process each job, add to DB and queue
         log.Printf("Adding jobs to DB and queue")
+        errs := 0
         for i, job := range jobs {
+            
+            // errs limit on MongoDB lookups or writes
+            if errs >= 3 {
+                log.Fatal("MongoDB error rate exceeded threshold")
+            }
+
             // check for unique jobID
             exists, err := jobExists(job.ID)
 
             if err != nil {
                 log.Printf("MongoDB lookup failed: %v", err)
+                errs += 1
                 continue
             }
 
             if exists {
-                log.Printf("Job already exists: %s", job.ID)
+                log.Printf("Job already exists: %s \n(%s)", job.ID, (job.Platform + " " + job.JobURL))
                 continue
             }
 
@@ -138,6 +146,7 @@ func main() {
             err_db := addJob(job)
             if err_db != nil {
                 log.Printf("Failed to add job to MongoDB: %v", err)
+                errs += 1
                 continue
             }
 
@@ -146,23 +155,41 @@ func main() {
 
             // publish to correct queue
 
-            // moveToDelete
 
         }
         
+
+        // move processed job emails to Job Hunting/To Delete
+        // performed in a goroutine asynchonously
+        go func() {
+            if len(emails) == 0 {
+                return
+            }
+            for i, email := range emails {
+
+                err := moveToDelete(c, email.ID)
+                if err != nil {
+                    log.Printf("Failed to move email %d: %v", email.ID, err)
+                    continue
+                }
+
+                log.Printf("Moved old email %d/%d: %s", i+1, len(emails), email.Subject)
+            }
+            log.Printf("Successfully moved %d old emails", len(emails))
+        }()
+
+
+        // Close connection to SMTP server
+        c.Logout()
+
+
+        log.Println("Processing complete. Waiting 5mins\n\n")
+        time.Sleep(5 * time.Minute)
 
 
         // Dump DB contents oldest to newest
         log.Printf("MongoDB contents (newest is last):")
         dumpJobs()
-
-
-
-        c.Logout()
-
-        log.Println("Processing complete. Waiting 5mins\n\n")
-        time.Sleep(5 * time.Minute)
-
     }
 
 }
