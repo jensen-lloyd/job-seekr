@@ -15,4 +15,4 @@ WORKDIR /app
 
 COPY --from=builder /app/email-worker .
 
-CMD ["./backend/email-worker"]
+CMD ["./email-worker"]
