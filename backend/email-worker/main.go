@@ -182,14 +182,16 @@ func main() {
         // Close connection to SMTP server
         c.Logout()
 
+        // Dump DB contents oldest to newest
+        log.Printf("MongoDB contents (newest is last):")
+        dumpJobs()
+
 
         log.Println("Processing complete. Waiting 5mins\n\n")
         time.Sleep(5 * time.Minute)
 
 
-        // Dump DB contents oldest to newest
-        log.Printf("MongoDB contents (newest is last):")
-        dumpJobs()
+
     }
 
 }
