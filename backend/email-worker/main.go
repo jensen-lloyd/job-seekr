@@ -78,6 +78,9 @@ func main() {
         // move old job emails to Job Hunting/To Delete
         // performed in a goroutine asynchonously
         oldEmailsDone := make(chan bool)
+        if delete_old == false {
+            oldEmailsDone <- true
+        }
         if delete_old == true {
             go func() {
                 not_moved := 0
