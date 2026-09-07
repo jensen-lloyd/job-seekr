@@ -89,6 +89,7 @@ func main() {
                     err := moveToDelete(c, email.ID)
                     if err != nil {
                         log.Printf("Failed to move email %d: %v", email.ID, err)
+                        not_moved += 1
                         continue
                     }
                             log.Printf("Moved old email %d/%d: %s", i+1, len(old_emails), email.Subject)
