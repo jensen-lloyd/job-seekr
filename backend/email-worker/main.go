@@ -111,7 +111,7 @@ func main() {
         } else {
             log.Printf("%d jobs extracted from %d emails", len(jobs)+1, len(emails))
         }
-        fmt.Println(jobs)
+        //fmt.Println(jobs) //DEBUG
 
 
 
