@@ -103,8 +103,6 @@ func main() {
         ready := <- mongoReady
         if !ready {
             log.Fatal("Unable to connect to MongoDB. Cannot proceed with operations")
-        } else if ready {
-            log.Println("MongoDB connected successfully")
         }
 
 
