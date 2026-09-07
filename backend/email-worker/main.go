@@ -118,7 +118,7 @@ func main() {
         if err != nil {
             log.Fatal(err)
         } else {
-            log.Printf("%d jobs extracted from %d emails", len(jobs)+1, len(emails))
+            log.Printf("%d jobs extracted from %d emails", len(jobs), len(emails))
         }
         //fmt.Println(jobs) //DEBUG
 
