@@ -15,7 +15,7 @@ func main() {
 
     Outer:
 	for {
-        fmt.Println("Connecting to IMAP @ ", server)
+        fmt.Println("Connecting to IMAP @", server)
 		c, err := connectIMAP(server, username, password)
 		if err != nil {
 			log.Printf("Failed to connect: %v", err)
@@ -116,7 +116,9 @@ func main() {
 
 
         // Process each job, add to DB and queue
-        for _, job := range jobs {
+        log.Printf("Adding jobs to DB and queue")
+        for i, job := range jobs {
+            log.Printf("Added job %d/%d: %s", i+1, len(jobs), (job.ID + job.JobURL))
             // check for unique jobID
             exists, err := jobExists(job.ID)
 
