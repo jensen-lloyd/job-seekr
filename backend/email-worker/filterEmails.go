@@ -18,8 +18,8 @@ func filterEmails(input_emails []Email, age_cutoff int) ([]Email, []Email, error
         isJobEmail := false
 
         // SEEK Job Alerts
-        if email.SenderName == "SEEK Job Alerts" &&
-           email.SenderAddr == "jobmail@s.seek.com.au" {
+        //if email.SenderName == "SEEK Job Alerts" &&
+        if email.SenderAddr == "jobmail@s.seek.com.au" {
 
             isJobEmail = true
         }
