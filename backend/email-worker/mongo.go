@@ -92,37 +92,6 @@ func initialiseMongo() error {
 
 
 
-
-
-func jobExists(jobID string) (bool, error) {
-
-	if jobsCollection == nil {
-		return false, fmt.Errorf("MongoDB is not connected")
-	}
-
-	ctx, cancel := context.WithTimeout(
-		context.Background(),
-		5*time.Second,
-	)
-	defer cancel()
-
-	filter := bson.M{
-		"id": jobID,
-	}
-
-	count, err := jobsCollection.CountDocuments(
-		ctx,
-		filter,
-	)
-
-	if err != nil {
-		return false, err
-	}
-
-	return count > 0, nil
-}
-
-
 func addJob(job Job) error {
     _, err := jobsCollection.InsertOne(context.Background(), job)
     return err
