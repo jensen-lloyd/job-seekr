@@ -1,9 +1,12 @@
 package main
 
 import (
+    "context"
     "fmt"
     "log"
+    //"strings"
     "time"
+
 )
 
 
@@ -135,16 +138,23 @@ func main() {
             // create job record
             job.DateAdded = time.Now()
 
-            err_db := addJob(job)
-            if err_db != nil {
+            db_result, err := jobsCollection.InsertOne(context.Background(), job)
+
+            if err != nil {
                 log.Printf("Failed to add job to MongoDB: %v", err)
-                errs += 1
                 continue
             }
 
-            jobID = result.InsertedID
-            log.Printf("Added to DB job %d/%d: %s", i+1, len(jobs), (job.Platform + " " + job.JobURL + " " + jobID))
+            jobID := fmt.Sprintf("%v", db_result.InsertedID)
 
+            log.Printf(
+                "Added to DB job %d/%d: %s %s %s",
+                i+1,
+                len(jobs),
+                job.Platform,
+                job.JobURL,
+                jobID,
+            )
 
             // publish to correct queue
 
