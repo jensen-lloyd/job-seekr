@@ -92,12 +92,6 @@ func initialiseMongo() error {
 
 
 
-func addJob(job Job) error {
-    _, err := jobsCollection.InsertOne(context.Background(), job)
-    return err
-}
-
-
 
 func dumpJobs() {
     opts := options.Find().SetSort(bson.D{{Key: "date_added", Value: 1}})
