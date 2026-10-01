@@ -130,29 +130,8 @@ func main() {
 
         // Process each job, add to DB and queue
         log.Printf("Adding jobs to DB and queue")
-        errs := 0
         for i, job := range jobs {
             
-            // errs limit on MongoDB lookups or writes
-            if errs >= 3 {
-                log.Fatal("MongoDB error rate exceeded threshold")
-            }
-
-            // check for unique jobID
-            exists, err := jobExists(job.ID)
-
-            if err != nil {
-                log.Printf("MongoDB lookup failed: %v", err)
-                errs += 1
-                continue
-            }
-
-            if exists {
-                log.Printf("Job already exists: %s \n(%s)", job.ID, (job.Platform + " " + job.JobURL))
-                continue
-            }
-
-
             // create job record
             job.DateAdded = time.Now()
 
@@ -163,7 +142,8 @@ func main() {
                 continue
             }
 
-            log.Printf("Added to DB job %d/%d: %s", i+1, len(jobs), (job.Platform + " " + job.JobURL))
+            jobID = result.InsertedID
+            log.Printf("Added to DB job %d/%d: %s", i+1, len(jobs), (job.Platform + " " + job.JobURL + " " + jobID))
 
 
             // publish to correct queue
