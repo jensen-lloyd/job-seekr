@@ -73,22 +73,18 @@ func extractJobs(emails []Email) ([]Job, error) {
         linkedinMatches := linkedinRegex.FindAllStringSubmatch(email.Body, -1)
 
         for _, match := range linkedinMatches {
-            jobID := match[1]
+            jobURL := match[1]
 
-            if len(jobID) < 9 {
+            if len(jobURL) < 9 {
                 continue
             }
 
             // Set platform
             platform := "linkedin"
 
-            // Create job object and add to slice
-            hash := sha256.Sum256([]byte(jobID + platform))
-
             jobs = append(jobs, Job{
-                ID: fmt.Sprintf("%x", hash),
                 Platform: platform,
-                JobURL: jobID,
+                JobURL: jobURL,
                 DateAdded: time.Now(),
             })
 
@@ -101,25 +97,21 @@ func extractJobs(emails []Email) ([]Job, error) {
         for _, match := range seekMatches {
 
             //Get jobID from email URL
-            jobID, err := getSeekJobID(match)
+            jobURL, err := getSeekJobID(match)
             if err != nil {
                 continue
             }
 
-            if len(jobID) < 7 {
+            if len(jobURL) < 7 {
                 continue
             }
 
             // Set platform
             platform := "seek"
 
-            // Create job object and add to slice
-            hash := sha256.Sum256([]byte(jobID + platform))
-
             jobs = append(jobs, Job{
-                ID: fmt.Sprintf("%x", hash),
                 Platform: platform,
-                JobURL: jobID,
+                JobURL: jobURL,
                 DateAdded: time.Now(), //placeholder - gets updated later on when adding job to DB
             })
 
