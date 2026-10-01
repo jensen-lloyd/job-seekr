@@ -98,6 +98,7 @@ func addJob(job Job) error {
 }
 
 
+
 func dumpJobs() {
     opts := options.Find().SetSort(bson.D{{Key: "date_added", Value: 1}})
 
@@ -109,17 +110,17 @@ func dumpJobs() {
     defer cursor.Close(context.Background())
 
     for cursor.Next(context.Background()) {
-        var job Job
-        if err := cursor.Decode(&job); err != nil {
+        var doc bson.M
+
+        if err := cursor.Decode(&doc); err != nil {
             log.Printf("Failed to decode job: %v", err)
             continue
         }
 
-        log.Printf("%s | %s | %s | %s",
-            job.DateAdded.Format("2006-01-02 15:04:05"),
-            job.Platform,
-            job.JobURL,
-            job.ID,
-        )
+        log.Printf("%v", doc)
+    }
+
+    if err := cursor.Err(); err != nil {
+        log.Printf("Cursor error: %v", err)
     }
 }
