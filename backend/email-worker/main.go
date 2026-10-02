@@ -14,7 +14,7 @@ func main() {
 	username := "jl.110@protonmail.com"
 	password := "SSF9Tigm7mIFk4iKhD18VQ"
 
-    db_dump := true
+    db_dump := false
     delete_when_done := true
     delete_old := true
     email_age_cutoff := 7 //age of email in days before it is classed 'old' and ignored
