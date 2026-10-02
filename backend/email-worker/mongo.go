@@ -13,7 +13,7 @@ import (
 
 const (
 	mongoURI        = "mongodb://mongodb:27017"
-	mongoDatabase   = "job_hunting"
+	mongoDatabase   = "job-seekr"
 	mongoCollection = "jobs"
 )
 
@@ -50,45 +50,6 @@ func connectMongo() error {
 	return nil
 }
 
-
-
-
-
-
-
-
-func initialiseMongo() error {
-
-	if jobsCollection == nil {
-		return fmt.Errorf("MongoDB is not connected")
-	}
-
-	ctx, cancel := context.WithTimeout(
-		context.Background(),
-		10*time.Second,
-	)
-	defer cancel()
-
-	// Make Job.ID unique
-	_, err := jobsCollection.Indexes().CreateOne(
-		ctx,
-		mongo.IndexModel{
-			Keys: bson.D{
-				{Key: "id", Value: 1},
-			},
-			Options: options.Index().
-				SetUnique(true),
-		},
-	)
-
-	if err != nil {
-		return err
-	}
-
-	log.Println("MongoDB initialised")
-
-	return nil
-}
 
 
 
