@@ -100,8 +100,8 @@ func main() {
 
 
         // Check if DB successfully connected and initialised
-        ready := <- mongoReady
-        if !ready {
+        dbReady := <- mongoReady
+        if !dbReady {
             log.Fatal("Unable to connect to MongoDB. Cannot proceed with operations")
         }
 
@@ -149,6 +149,14 @@ func main() {
         }
         
 
+        // Check if move of old emails is complete
+        ready := <- oldEmailsDone
+        if !ready {
+            log.Printf("Moving old emails failed. Continuing with other operations")
+        }
+
+
+
         // move processed job emails to Job Hunting/To Delete
         // performed in a goroutine asynchonously
         if delete_when_done == true {
@@ -172,7 +180,6 @@ func main() {
 
 
         // Close connection to SMTP server
-        _ = <- oldEmailsDone
         c.Logout()
         log.Printf("IMAP connection closed")
 
