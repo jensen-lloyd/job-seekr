@@ -14,7 +14,7 @@ func main() {
 	username := "jl.110@protonmail.com"
 	password := "SSF9Tigm7mIFk4iKhD18VQ"
 
-    db_dump := false
+    db_dump := true
     delete_when_done := true
     delete_old := true
     email_age_cutoff := 7 //age of email in days before it is classed 'old' and ignored
@@ -43,18 +43,8 @@ func main() {
                 mongoReady <- false
                 return
             }
-
-            err_init := initialiseMongo()
-            if err_init != nil {
-                log.Printf("MongoDB initialisation failed: %v", err_init)
-                mongoReady <- false
-                return
-            }
-
             mongoReady <- true
-
         }()
-
 
 
 
@@ -126,8 +116,6 @@ func main() {
         } else {
             log.Printf("%d jobs extracted from %d emails", len(jobs), len(emails))
         }
-        //fmt.Println(jobs) //DEBUG
-
 
 
         // Process each job, add to DB and queue
