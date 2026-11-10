@@ -103,8 +103,8 @@ func main() {
         confirms := ch.NotifyPublish(make(chan amqp.Confirmation, 1))
 
 
-        // Pull unread emails from server
-        emails, err := getMail(c)
+        // Pull unread emails from inbox
+        emails, err := getMail(c, "INBOX", true)
         if err != nil {
             log.Fatal(err)
         } else {
@@ -152,6 +152,29 @@ func main() {
 
 
 
+        // move job emails to Job Hunting/toBeProcessed
+        // performed in a goroutine asynchonously
+        moveEmailsDone := make(chan bool, 1)
+        go func() {
+            not_moved := 0
+            if len(emails) == 0 {
+                moveEmailsDone <- true
+                return
+            }
+            for i, email := range emails {
+
+                err := moveEmail(c, email.ID, "Folders/Job Hunting/toBeProcessed")
+                if err != nil {
+                    log.Printf("Failed to move email %d: %v", email.ID, err)
+                    not_moved += 1
+                    continue
+                }
+                        log.Printf("Moved email %d/%d: %s", i+1, len(emails), email.Subject)
+            }
+            log.Printf("Successfully moved %d of %d emails to toBeProcessed folder", (len(emails)-not_moved), len(emails))
+            moveEmailsDone <- true
+        }()
+
 
 
         // Check if DB successfully connected and initialised
@@ -160,6 +183,19 @@ func main() {
             log.Fatal("Unable to connect to MongoDB. Cannot proceed with operations")
         }
 
+
+        // Pull emails from toBeProcessed
+        processedEmailsReady := <- moveEmailsDone
+        if !processedEmailsReady {
+            log.Fatal("Unable to proceed, emails not loaded from toBeProcessed")
+        }
+
+        emails, err = getMail(c, "Folders/Job Hunting/toBeProcessed", false)
+        if err != nil {
+            log.Fatal(err)
+        } else {
+            log.Printf("Pulled all %d emails from toBeProcessed folder", len(emails))
+        }
 
 
 
