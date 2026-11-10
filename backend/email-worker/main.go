@@ -47,6 +47,44 @@ func main() {
         }()
 
 
+        // Connect to rabbitMQ queue
+        conn, err := amqp.Dial("amqp://guest:guest@rabbit-mq:5672/")
+        if err != nil {
+            log.Fatal(err)
+        }
+        defer conn.Close()
+
+        ch, err := conn.Channel()
+        if err != nil {
+            log.Fatal(err)
+        }
+        defer ch.Close()
+
+        // Declare queues (no change if they exist already)
+        _, err = ch.QueueDeclare(
+            seekQueue,
+            true,  // durable
+            false, // delete when unused
+            false, // exclusive
+            false, // no-wait
+            nil,
+        )
+        if err != nil {
+            log.Fatal(err)
+        }
+
+        _, err = ch.QueueDeclare(
+            linkedinQueue,
+            true,
+            false,
+            false,
+            false,
+            nil,
+        )
+        if err != nil {
+            log.Fatal(err)
+        }
+
 
         // Pull unread emails from server
         emails, err := getMail(c)
@@ -82,7 +120,7 @@ func main() {
                 }
                 for i, email := range old_emails {
 
-                    err := moveToDelete(c, email.ID)
+                    err := moveEmail(c, email.ID, "Folders/Job Hunting/toDelete")
                     if err != nil {
                         log.Printf("Failed to move email %d: %v", email.ID, err)
                         not_moved += 1
@@ -122,7 +160,7 @@ func main() {
         log.Printf("Adding jobs to DB and queue")
         for i, job := range jobs {
             
-            // create job record
+            // enter job record in DB
             job.DateAdded = time.Now()
 
             db_result, err := jobsCollection.InsertOne(context.Background(), job)
@@ -144,6 +182,19 @@ func main() {
             )
 
             // publish to correct queue
+            queue := ""
+            switch job.Platform {
+            case "seek":
+                queue = seekQueue
+
+            case "linkedin":
+                queue = linkedinQueue
+
+            default:
+                log.Printf("Unknown platform %q, not adding job to queue", job.Platform)
+                continue
+            }
+
 
 
         }
@@ -166,7 +217,7 @@ func main() {
             }
             for i, email := range emails {
 
-                err := moveToDelete(c, email.ID)
+                err := moveEmail(c, email.ID, "Folders/Job Hunting/toDelete")
                 if err != nil {
                     log.Printf("Failed to move email %d: %v", email.ID, err)
                     not_moved += 1

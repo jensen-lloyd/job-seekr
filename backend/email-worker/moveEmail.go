@@ -5,8 +5,7 @@ import (
     "github.com/emersion/go-imap/client"
 )
 
-func moveToDelete(c *client.Client, uid uint32) error {
-    destination := "Folders/Job Hunting/To Delete"
+func moveEmail(c *client.Client, uid uint32, string destination) error {
 
     //get mailbox, now as Read/Write
     c.Select("INBOX", false)
