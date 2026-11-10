@@ -5,7 +5,7 @@ import (
     "github.com/emersion/go-imap/client"
 )
 
-func moveEmail(c *client.Client, uid uint32, string destination) error {
+func moveEmail(c *client.Client, uid uint32, destination string) error {
 
     //get mailbox, now as Read/Write
     c.Select("INBOX", false)

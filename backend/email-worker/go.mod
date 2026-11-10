@@ -6,6 +6,7 @@ require (
 	github.com/emersion/go-imap v1.2.1 // indirect
 	github.com/emersion/go-sasl v0.0.0-20200509203442-7bfe0ed36a21 // indirect
 	github.com/klauspost/compress v1.19.2 // indirect
+	github.com/rabbitmq/amqp091-go v1.16.0 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.2.0 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect

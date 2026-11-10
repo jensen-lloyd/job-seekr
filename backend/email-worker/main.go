@@ -2,11 +2,20 @@ package main
 
 import (
     "context"
+    "encoding/json"
     "fmt"
     "log"
+    "strings"
     "time"
 
+    amqp "github.com/rabbitmq/amqp091-go"
 )
+
+const (
+    seekQueue     = "job-seek-scrape"
+    linkedinQueue = "job-linkedin-scrape"
+)
+
 
 
 func main() {
@@ -86,6 +95,14 @@ func main() {
         }
 
 
+        // Enable publisher confirms
+        if err := ch.Confirm(false); err != nil {
+            log.Fatalf("Failed to enable publisher confirms: %v", err)
+        }
+
+        confirms := ch.NotifyPublish(make(chan amqp.Confirmation, 1))
+
+
         // Pull unread emails from server
         emails, err := getMail(c)
         if err != nil {
@@ -105,9 +122,9 @@ func main() {
 
 
 
-        // move old job emails to Job Hunting/To Delete
+        // move old job emails to Job Hunting/toDelete
         // performed in a goroutine asynchonously
-        oldEmailsDone := make(chan bool)
+        oldEmailsDone := make(chan bool, 1)
         if delete_old == false {
             oldEmailsDone <- true
         }
@@ -195,6 +212,48 @@ func main() {
                 continue
             }
 
+            // Convert MongoDB ObjectID into hex string
+            jobID = strings.TrimPrefix(jobID, "ObjectID(\"")
+            jobID = strings.TrimSuffix(jobID, "\")")
+
+            // Create queue message
+            queueJob := QueueJob{
+                JobID: jobID,
+            }
+
+            body, err := json.Marshal(queueJob)
+            if err != nil {
+                log.Printf("Failed to encode queue message: %v", err)
+                continue
+            }
+
+            // Publish message
+            err = ch.Publish(
+                "",    // default exchange
+                queue, // routing key = queue name
+                false, // mandatory
+                false, // immediate (unused)
+                amqp.Publishing{
+                    ContentType:  "application/json",
+                    DeliveryMode: amqp.Persistent,
+                    Body:         body,
+                },
+            )
+
+            if err != nil {
+                log.Printf("Failed to publish job %s: %v", jobID, err)
+                continue
+            }
+
+            // Wait for RabbitMQ confirmation
+            confirmation := <-confirms
+
+            if !confirmation.Ack {
+                log.Printf("RabbitMQ rejected job %s", jobID)
+                continue
+            }
+
+            log.Printf("Queued job %s to %s", jobID, queue)
 
 
         }
@@ -208,7 +267,7 @@ func main() {
 
 
 
-        // move processed job emails to Job Hunting/To Delete
+        // move processed job emails to Job Hunting/toDelete
         // performed in a goroutine asynchonously
         if delete_when_done == true {
             not_moved := 0
