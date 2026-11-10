@@ -18,3 +18,8 @@ type Job struct {
 	JobURL   string    `bson:"job_url"` //is just the job number on respective platform
 	DateAdded time.Time `bson:"date_added"`
 }
+
+
+type QueueJob struct {
+    JobID string `json:"job_id"`
+}
