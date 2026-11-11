@@ -5,16 +5,16 @@ import (
     "github.com/emersion/go-imap/client"
 )
 
-func moveEmail(c *client.Client, uid uint32, destination string) error {
+func moveEmail(c *client.Client, uid uint32, source string, destination string) error {
 
     //get mailbox, now as Read/Write
-    c.Select("INBOX", false)
+    c.Select(source, false)
 
     seqSet := new(imap.SeqSet)
     seqSet.AddNum(uid)
 
     // Copy email to destination folder
-    err := c.UidCopy(
+    err := c.UidMove(
         seqSet,
         destination,
     )

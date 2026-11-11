@@ -128,7 +128,7 @@ func main() {
             not_moved := 0
             for i, email := range old_emails {
 
-                err := moveEmail(c, email.ID, "Folders/Job Hunting/toDelete")
+                err := moveEmail(c, email.ID, "INBOX", "Folders/Job Hunting/toDelete")
                 if err != nil {
                     log.Printf("Failed to move email %d: %v", email.ID, err)
                     not_moved += 1
@@ -146,7 +146,7 @@ func main() {
         not_moved := 0
         for i, email := range emails {
 
-            err := moveEmail(c, email.ID, "Folders/Job Hunting/toBeProcessed")
+            err := moveEmail(c, email.ID, "INBOX", "Folders/Job Hunting/toBeProcessed")
             if err != nil {
                 log.Printf("Failed to move email %d: %v", email.ID, err)
                 not_moved += 1
@@ -272,7 +272,7 @@ func main() {
         
 
 
-        // move processed job emails to Job Hunting/toDelete
+        // move processed job emails from toBeProcessed -> toDelete
         // performed in a goroutine asynchonously
         if delete_when_done == true {
             not_moved := 0
@@ -281,7 +281,7 @@ func main() {
             }
             for i, email := range emails {
 
-                err := moveEmail(c, email.ID, "Folders/Job Hunting/toDelete")
+                err := moveEmail(c, email.ID, "Folders/Job Hunting/toBeProcessed", "Folders/Job Hunting/toDelete")
                 if err != nil {
                     log.Printf("Failed to move email %d: %v", email.ID, err)
                     not_moved += 1
