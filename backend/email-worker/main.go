@@ -124,56 +124,37 @@ func main() {
 
         // move old job emails to Job Hunting/toDelete
         // performed in a goroutine asynchonously
-        oldEmailsDone := make(chan bool, 1)
-        if delete_old == false {
-            oldEmailsDone <- true
-        }
         if delete_old == true {
-            go func() {
-                not_moved := 0
-                if len(old_emails) == 0 {
-                    oldEmailsDone <- true
-                    return
-                }
-                for i, email := range old_emails {
+            not_moved := 0
+            for i, email := range old_emails {
 
-                    err := moveEmail(c, email.ID, "Folders/Job Hunting/toDelete")
-                    if err != nil {
-                        log.Printf("Failed to move email %d: %v", email.ID, err)
-                        not_moved += 1
-                        continue
-                    }
-                            log.Printf("Moved old email %d/%d: %s", i+1, len(old_emails), email.Subject)
+                err := moveEmail(c, email.ID, "Folders/Job Hunting/toDelete")
+                if err != nil {
+                    log.Printf("Failed to move email %d: %v", email.ID, err)
+                    not_moved += 1
+                    continue
                 }
-                log.Printf("Successfully moved %d of %d old emails", (len(old_emails)-not_moved), len(old_emails))
-                oldEmailsDone <- true
-            }()
+                        log.Printf("Moved old email %d/%d: %s", i+1, len(old_emails), email.Subject)
+            }
+            log.Printf("Successfully moved %d of %d old emails", (len(old_emails)-not_moved), len(old_emails))
         }
 
 
 
         // move job emails to Job Hunting/toBeProcessed
         // performed in a goroutine asynchonously
-        moveEmailsDone := make(chan bool, 1)
-        go func() {
-            not_moved := 0
-            if len(emails) == 0 {
-                moveEmailsDone <- true
-                return
-            }
-            for i, email := range emails {
+        not_moved := 0
+        for i, email := range emails {
 
-                err := moveEmail(c, email.ID, "Folders/Job Hunting/toBeProcessed")
-                if err != nil {
-                    log.Printf("Failed to move email %d: %v", email.ID, err)
-                    not_moved += 1
-                    continue
-                }
-                        log.Printf("Moved email %d/%d: %s", i+1, len(emails), email.Subject)
+            err := moveEmail(c, email.ID, "Folders/Job Hunting/toBeProcessed")
+            if err != nil {
+                log.Printf("Failed to move email %d: %v", email.ID, err)
+                not_moved += 1
+                continue
             }
-            log.Printf("Successfully moved %d of %d emails to toBeProcessed folder", (len(emails)-not_moved), len(emails))
-            moveEmailsDone <- true
-        }()
+                    log.Printf("Moved email %d/%d: %s", i+1, len(emails), email.Subject)
+        }
+        log.Printf("Successfully moved %d of %d emails to toBeProcessed folder", (len(emails)-not_moved), len(emails))
 
 
 
@@ -185,11 +166,6 @@ func main() {
 
 
         // Pull emails from toBeProcessed
-        processedEmailsReady := <- moveEmailsDone
-        if !processedEmailsReady {
-            log.Fatal("Unable to proceed, emails not loaded from toBeProcessed")
-        }
-
         emails, err = getMail(c, "Folders/Job Hunting/toBeProcessed", false)
         if err != nil {
             log.Fatal(err)
@@ -294,13 +270,6 @@ func main() {
 
         }
         
-
-        // Check if move of old emails is complete
-        ready := <- oldEmailsDone
-        if !ready {
-            log.Printf("Moving old emails failed. Continuing with other operations")
-        }
-
 
 
         // move processed job emails to Job Hunting/toDelete
