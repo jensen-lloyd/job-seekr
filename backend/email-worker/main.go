@@ -108,7 +108,7 @@ func main() {
         if err != nil {
             log.Fatal(err)
         } else {
-            log.Printf("Pulled all %d unread emails from server", len(emails))
+            log.Printf("Pulled %d unread emails from server", len(emails))
         }
 
 
@@ -154,7 +154,7 @@ func main() {
             }
                     log.Printf("Moved detected email %d/%d: %s", i+1, len(emails), email.Subject)
         }
-        log.Printf("Successfully moved %d of %d detected emails -> toBeProcessed folder", (len(emails)-not_moved), len(emails))
+        log.Printf("Successfully moved %d of %d detected emails -> toBeProcessed", (len(emails)-not_moved), len(emails))
 
 
 
