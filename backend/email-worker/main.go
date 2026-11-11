@@ -57,7 +57,7 @@ func main() {
 
 
         // Connect to rabbitMQ queue
-        conn, err := amqp.Dial("amqp://guest:guest@rabbit-mq:5672/")
+        conn, err := amqp.Dial("amqp://guest:guest@rabbitmq:5672/")
         if err != nil {
             log.Fatal(err)
         }
