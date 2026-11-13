@@ -18,10 +18,10 @@ const (
     linkedinQueue = "job-linkedin-scrape"
 
 
-    db_dump := false // prints entire DB contents after each cycle
-    delete_when_done := true
-    delete_old := true
-    email_age_cutoff := 7 //age of email in days before it is classed 'old' and ignored
+    db_dump =          false // prints entire DB contents after each cycle
+    delete_when_done = true
+    delete_old =       true
+    email_age_cutoff = 7 //age of email in days before it is classed 'old' and ignored
 )
 
 
