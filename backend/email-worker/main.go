@@ -5,6 +5,8 @@ import (
     "encoding/json"
     "fmt"
     "log"
+    "net"
+    "os"
     "strings"
     "time"
 
@@ -14,19 +16,29 @@ import (
 const (
     seekQueue     = "job-seek-scrape"
     linkedinQueue = "job-linkedin-scrape"
+
+
+    db_dump := false // prints entire DB contents after each cycle
+    delete_when_done := true
+    delete_old := true
+    email_age_cutoff := 7 //age of email in days before it is classed 'old' and ignored
 )
 
 
 
 func main() {
-	server := "100.64.74.102:1143"
-	username := "jl.110@protonmail.com"
-	password := "SSF9Tigm7mIFk4iKhD18VQ"
+    imapHost := os.Getenv("IMAP_HOSTNAME")
+    imapPort := os.Getenv("IMAP_PORT")
+    username := os.Getenv("IMAP_USERNAME")
+    password := os.Getenv("IMAP_PASSWORD")
 
-    db_dump := false
-    delete_when_done := true
-    delete_old := true
-    email_age_cutoff := 7 //age of email in days before it is classed 'old' and ignored
+    // Validate environment variables
+    if imapHost == "" || imapPort == "" || username == "" || password == "" {
+        log.Fatal("Missing one or more IMAP environment variables")
+    }
+
+    // Construct IMAP server address
+    server := net.JoinHostPort(imapHost, imapPort)
 
 
     Outer:
